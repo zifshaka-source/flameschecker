@@ -4,167 +4,171 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <title>Flamify • Relationship Game</title>
-    <meta
-      name="description"
-      content="The school notebook game, reborn. Type two names and watch the FLAMES reveal your fate."
-    />
+    <title>Flamify • Discover Your Connection</title>
+    <meta name="description" content="The classic FLAMES relationship game, beautifully reimagined. Find out if you're Friends, Lovers, Affectionate, Married, Enemies, or Siblings." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <canvas id="confettiCanvas" aria-hidden="true"></canvas>
     <div class="bg" aria-hidden="true"></div>
 
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">🔥</div>
-        <div class="brand-text">
-          <div class="brand-title">Flamify</div>
-          <div class="brand-subtitle">The school game, reborn.</div>
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="logo-wrap">
+          <svg class="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Flamify logo">
+            <circle cx="32" cy="32" r="30" fill="url(#ringGrad)" opacity="0.15"/>
+            <circle cx="32" cy="32" r="28" fill="url(#bgGrad)"/>
+            <circle cx="32" cy="32" r="27" stroke="url(#strokeGrad)" stroke-width="0.8" fill="none" opacity="0.5"/>
+            <path d="M32 12 C32 12, 41 20, 41 28 C41 33.5, 37 36, 37 36 C37.5 32, 35 30, 35 30 C35 30, 33 34, 32 36 C31 34, 29 30, 29 30 C29 30, 26.5 32, 27 36 C27 36, 23 33.5, 23 28 C23 20, 32 12, 32 12Z" fill="url(#flameGrad)"/>
+            <text x="32" y="54" text-anchor="middle" font-family="Playfair Display, serif" font-weight="900" font-size="13" fill="white" opacity="0.9" letter-spacing="1.5">fy</text>
+            <defs>
+              <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ff6b8a"/>
+                <stop offset="100%" stop-color="#f5a623"/>
+              </radialGradient>
+              <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#2d0a1a"/>
+                <stop offset="100%" stop-color="#180a2a"/>
+              </linearGradient>
+              <linearGradient id="strokeGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ff6b8a"/>
+                <stop offset="100%" stop-color="#f5a623"/>
+              </linearGradient>
+              <linearGradient id="flameGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+                <stop offset="0%" stop-color="#ffd166"/>
+                <stop offset="45%" stop-color="#ff6b8a"/>
+                <stop offset="100%" stop-color="#c44569"/>
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
-      </div>
-
-      <div class="topbar-actions">
-        <button id="themeToggle" class="ghost" type="button" aria-label="Toggle theme">
-          <span class="ghost-icon" aria-hidden="true">◐</span>
-          <span class="ghost-text">Theme</span>
-        </button>
-        <a class="ghost" href="#how" aria-label="How it works">
-          <span class="ghost-icon" aria-hidden="true">?</span>
-          <span class="ghost-text">How</span>
-        </a>
+        <h1 class="hero-title">Flamify</h1>
+        <p class="hero-tagline">Discover your connection</p>
+        <div class="topbar-actions">
+          <button id="themeToggle" class="ghost" type="button" aria-label="Toggle theme">
+            <span class="ghost-icon">◐</span>
+            <span>Theme</span>
+          </button>
+          <a class="ghost" href="#how">
+            <span class="ghost-icon">?</span>
+            <span>How it works</span>
+          </a>
+        </div>
       </div>
     </header>
 
     <main class="wrap">
-      <section class="card" aria-labelledby="title">
-        <div class="card-header">
-          <h1 id="title">Find your FLAMES</h1>
-          <p class="muted">
-            Type two names, watch the letters cancel out and FLAMES eliminate step-by-step.
-          </p>
-        </div>
 
+      <section class="card" aria-labelledby="formTitle">
+        <div class="card-header">
+          <h2 id="formTitle">Enter two names</h2>
+          <p class="muted">Watch the letters cancel out and FLAMES reveal your fate.</p>
+        </div>
         <form id="flamesForm" class="form" autocomplete="off">
           <div class="grid">
             <label class="field">
               <span class="label">Your name</span>
-              <input
-                id="nameA"
-                name="nameA"
-                type="text"
-                inputmode="text"
-                placeholder="e.g., Alex"
-                maxlength="40"
-                required
-              />
-              <span class="hint">Letters only; spaces are ignored.</span>
+              <input id="nameA" name="nameA" type="text" inputmode="text" placeholder="e.g., Alex" maxlength="40" required />
+              <span class="hint">Letters only — spaces ignored</span>
             </label>
-
             <label class="field">
-              <span class="label">Partner name</span>
-              <input
-                id="nameB"
-                name="nameB"
-                type="text"
-                inputmode="text"
-                placeholder="e.g., Sam"
-                maxlength="40"
-                required
-              />
-              <span class="hint">Try different spellings for fun.</span>
+              <span class="label">Their name</span>
+              <input id="nameB" name="nameB" type="text" inputmode="text" placeholder="e.g., Sam" maxlength="40" required />
+              <span class="hint">Try different spellings for fun</span>
             </label>
           </div>
-
           <div class="actions">
             <button id="startBtn" class="primary" type="submit">
               <span class="btn-glow" aria-hidden="true"></span>
-              <span class="btn-text">Start 🔥</span>
+              <span class="btn-text">Reveal my FLAMES</span>
             </button>
             <button id="resetBtn" class="secondary" type="button">Reset</button>
             <div class="status" id="status" role="status" aria-live="polite"></div>
           </div>
         </form>
+      </section>
 
-        <div class="divider"></div>
-
-        <section class="stage" aria-label="Animation stage">
-          <div class="stage-row">
-            <div class="stage-title">Letter canceling</div>
+      <section class="card stage-card" aria-label="Animation stage">
+        <div class="stage">
+          <div class="stage-block">
+            <div class="stage-label">Letter canceling</div>
             <div class="chips-wrap">
               <div class="chips" id="chipsA" aria-label="Your name letters"></div>
-              <div class="chips" id="chipsB" aria-label="Partner name letters"></div>
+              <div class="chips" id="chipsB" aria-label="Their name letters"></div>
             </div>
           </div>
-
-          <div class="stage-row">
-            <div class="stage-title">Remaining count</div>
+          <div class="stage-block">
+            <div class="stage-label">Remaining count</div>
             <div class="countbox">
               <div class="count" id="count">—</div>
               <div class="count-sub muted" id="countSub">After removing common letters</div>
             </div>
           </div>
-
-          <div class="stage-row">
-            <div class="stage-title">FLAMES elimination</div>
+          <div class="stage-block">
+            <div class="stage-label">FLAMES elimination</div>
             <div class="arena">
               <div class="flames" id="flames" aria-label="FLAMES letters"></div>
-              <div class="arena-sub muted" id="arenaSub">
-                Each round: count forward, remove one, rotate, repeat.
-              </div>
+              <div class="arena-sub muted" id="arenaSub">Each round: count forward, remove one, rotate, repeat.</div>
             </div>
           </div>
-
-          <div class="stage-row result-row" id="resultRow" hidden>
-            <div class="stage-title">Result</div>
-            <div class="result-wrap">
-              <div class="result" id="result" aria-live="polite"></div>
-              <div class="result-actions">
-                <button id="shareBtn" class="share-btn" type="button">
-                  <span>Share result</span>
-                  <span class="share-icon">🔗</span>
-                </button>
-                <div id="copyToast" class="copy-toast" aria-live="polite"></div>
-              </div>
+          <div class="result-block" id="resultRow" hidden>
+            <div class="result" id="result" aria-live="polite"></div>
+            <div class="result-actions">
+              <button id="shareBtn" class="share-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share result
+              </button>
+              <div id="copyToast" class="copy-toast" aria-live="polite"></div>
             </div>
           </div>
-        </section>
+        </div>
       </section>
 
-      <!-- FLAMES meaning legend -->
       <section class="card legend-card" aria-labelledby="legendTitle">
-        <h2 id="legendTitle">What does FLAMES mean?</h2>
+        <h2 id="legendTitle" class="section-title">What does FLAMES mean?</h2>
         <div class="legend-grid">
-          <div class="legend-item"><span class="legend-badge f">F</span><div><strong>Friends</strong><div class="muted tiny">Good vibes, solid bond</div></div></div>
-          <div class="legend-item"><span class="legend-badge l">L</span><div><strong>Love</strong><div class="muted tiny">Romantic connection</div></div></div>
-          <div class="legend-item"><span class="legend-badge a">A</span><div><strong>Affection</strong><div class="muted tiny">Warm and emotionally close</div></div></div>
-          <div class="legend-item"><span class="legend-badge m">M</span><div><strong>Marriage</strong><div class="muted tiny">Partner material 💍</div></div></div>
-          <div class="legend-item"><span class="legend-badge e">E</span><div><strong>Enemies</strong><div class="muted tiny">Chaotic match ⚡</div></div></div>
-          <div class="legend-item"><span class="legend-badge s">S</span><div><strong>Siblings</strong><div class="muted tiny">Like family, always there</div></div></div>
+          <div class="legend-item"><div class="legend-icon f">F</div><div><div class="legend-name">Friends</div><div class="legend-desc muted">A solid, lasting bond</div></div></div>
+          <div class="legend-item"><div class="legend-icon l">L</div><div><div class="legend-name">Love</div><div class="legend-desc muted">Deep romantic connection</div></div></div>
+          <div class="legend-item"><div class="legend-icon a">A</div><div><div class="legend-name">Affection</div><div class="legend-desc muted">Warm and emotionally close</div></div></div>
+          <div class="legend-item"><div class="legend-icon m">M</div><div><div class="legend-name">Marriage</div><div class="legend-desc muted">Partner material 💍</div></div></div>
+          <div class="legend-item"><div class="legend-icon e">E</div><div><div class="legend-name">Enemies</div><div class="legend-desc muted">A chaotic match ⚡</div></div></div>
+          <div class="legend-item"><div class="legend-icon s">S</div><div><div class="legend-name">Siblings</div><div class="legend-desc muted">Like family, always there</div></div></div>
         </div>
       </section>
 
       <section class="card subtle" id="how" aria-labelledby="howTitle">
-        <h2 id="howTitle">How it works</h2>
+        <h2 id="howTitle" class="section-title">How it works</h2>
         <ol class="how">
-          <li>We ignore spaces and non-letters, then cancel matching letters between the two names.</li>
-          <li>We add the remaining letters: <span class="pill">count</span>.</li>
-          <li>
-            We repeatedly count around <span class="pill">F L A M E S</span>, remove one letter, and rotate
-            the list until one remains.
-          </li>
+          <li>Spaces and non-letters are ignored. Matching letters between the two names cancel each other out.</li>
+          <li>The remaining letters are counted to get a <span class="pill">number</span>.</li>
+          <li>We count around <span class="pill">F · L · A · M · E · S</span>, removing one letter each round, until one remains.</li>
         </ol>
-        <p class="muted tiny">
-          For entertainment only. Different variants exist; this matches the common "cancel letters + rotate" method.
-        </p>
+        <p class="muted tiny">For entertainment only. This uses the common "cancel letters + rotate" variant.</p>
       </section>
+
     </main>
 
     <footer class="footer">
-      <div class="muted tiny">Flamify • No tracking • Works offline 🔥</div>
+      <div class="footer-inner">
+        <svg class="footer-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" fill="url(#footerBg)"/>
+          <path d="M32 12 C32 12, 41 20, 41 28 C41 33.5, 37 36, 37 36 C37.5 32, 35 30, 35 30 C35 30, 33 34, 32 36 C31 34, 29 30, 29 30 C29 30, 26.5 32, 27 36 C27 36, 23 33.5, 23 28 C23 20, 32 12, 32 12Z" fill="url(#footerFlame)"/>
+          <defs>
+            <linearGradient id="footerBg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2d0a1a"/>
+              <stop offset="100%" stop-color="#180a2a"/>
+            </linearGradient>
+            <linearGradient id="footerFlame" x1="0.5" y1="0" x2="0.5" y2="1">
+              <stop offset="0%" stop-color="#ffd166"/>
+              <stop offset="100%" stop-color="#ff6b8a"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="muted tiny">Flamify · No tracking · Works offline</span>
+      </div>
     </footer>
 
     <script src="./app.js"></script>
