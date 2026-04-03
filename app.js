@@ -14,14 +14,108 @@ const UI = {
   resultRow: document.getElementById("resultRow"),
   result: document.getElementById("result"),
   themeToggle: document.getElementById("themeToggle"),
+  shareBtn: document.getElementById("shareBtn"),
+  copyToast: document.getElementById("copyToast"),
+  confettiCanvas: document.getElementById("confettiCanvas"),
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// ─── Confetti ─────────────────────────────────────────────────────────────────
+
+const CONFETTI_COLORS = [
+  "#7c3aed", "#22c55e", "#06b6d4",
+  "#fb7185", "#fbbf24", "#a78bfa",
+  "#34d399", "#f472b6"
+];
+
+let confettiActive = false;
+
+function launchConfetti() {
+  const canvas = UI.confettiCanvas;
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  confettiActive = true;
+
+  const particles = Array.from({ length: 120 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -10 - Math.random() * 100,
+    w: 8 + Math.random() * 6,
+    h: 4 + Math.random() * 4,
+    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    vx: (Math.random() - 0.5) * 3,
+    vy: 2.5 + Math.random() * 3,
+    angle: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.2,
+    opacity: 1,
+  }));
+
+  let start = null;
+  const DURATION = 2800;
+
+  function frame(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.07;
+      p.angle += p.spin;
+      if (elapsed > DURATION * 0.6) {
+        p.opacity = Math.max(0, p.opacity - 0.018);
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+
+    if (elapsed < DURATION) {
+      requestAnimationFrame(frame);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiActive = false;
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// ─── Share ─────────────────────────────────────────────────────────────────────
+
+let lastResultText = "";
+
+function showToast(msg) {
+  UI.copyToast.textContent = msg;
+  UI.copyToast.classList.add("visible");
+  setTimeout(() => UI.copyToast.classList.remove("visible"), 2200);
+}
+
+function shareResult() {
+  if (!lastResultText) return;
+  const text = `${lastResultText}\n🔥 Try Flamify → https://flamify-rho.vercel.app`;
+  if (navigator.share) {
+    navigator.share({ title: "Flamify Result", text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("✅ Copied to clipboard!");
+    }).catch(() => {
+      showToast("❌ Copy failed — try manually");
+    });
+  }
+}
+
+// ─── Core logic ────────────────────────────────────────────────────────────────
+
 function sanitizeName(raw) {
-  return (raw || "")
-    .toLowerCase()
-    .replace(/[^a-z]/g, "");
+  return (raw || "").toLowerCase().replace(/[^a-z]/g, "");
 }
 
 function setStatus(text) {
@@ -38,6 +132,7 @@ function clearStage() {
   UI.arenaSub.textContent = "Each round: count forward, remove one, rotate, repeat.";
   UI.resultRow.hidden = true;
   UI.result.innerHTML = "";
+  lastResultText = "";
 }
 
 function renderChips(container, str) {
@@ -78,14 +173,12 @@ async function animateCanceling(a, b) {
   renderChips(UI.chipsB, b);
 
   const chipsA = Array.from(UI.chipsA.querySelectorAll(".chip"));
-
   let remainingB = b.split("");
   const cancelledA = new Set();
 
   for (let i = 0; i < a.length; i++) {
     const char = a[i];
     if (cancelledA.has(i)) continue;
-
     const matchIndex = remainingB.indexOf(char);
     if (matchIndex === -1) continue;
 
@@ -106,7 +199,6 @@ async function animateCanceling(a, b) {
 
     remainingB.splice(matchIndex, 1);
     cancelledA.add(i);
-
     await sleep(90);
   }
 
@@ -139,27 +231,19 @@ function finalizeFlames(count) {
 
 function describeResult(letter) {
   switch (letter) {
-    case "F":
-      return { title: "Friends", desc: "Good vibes and strong friendship energy.", badge: "f" };
-    case "L":
-      return { title: "Love", desc: "Romantic connection and attraction.", badge: "l" };
-    case "A":
-      return { title: "Affection", desc: "Caring, warm, and emotionally close.", badge: "a" };
-    case "M":
-      return { title: "Marriage", desc: "Commitment vibes—partner material.", badge: "m" };
-    case "E":
-      return { title: "Enemies", desc: "A chaotic match—handle with care.", badge: "e" };
-    case "S":
-      return { title: "Siblings", desc: "Like family—playful and protective.", badge: "s" };
-    default:
-      return { title: "Unknown", desc: "Try again with valid names.", badge: "f" };
+    case "F": return { title: "Friends", desc: "Good vibes and strong friendship energy.", badge: "f", emoji: "🤝" };
+    case "L": return { title: "Love",    desc: "Romantic connection and deep attraction.", badge: "l", emoji: "❤️" };
+    case "A": return { title: "Affection", desc: "Caring, warm, and emotionally close.", badge: "a", emoji: "🥰" };
+    case "M": return { title: "Marriage", desc: "Commitment vibes — partner material.", badge: "m", emoji: "💍" };
+    case "E": return { title: "Enemies", desc: "A chaotic match — handle with care.", badge: "e", emoji: "⚡" };
+    case "S": return { title: "Siblings", desc: "Like family — playful and protective.", badge: "s", emoji: "🫂" };
+    default:  return { title: "Unknown", desc: "Try again with valid names.", badge: "f", emoji: "🤔" };
   }
 }
 
 async function animateFlamesElimination(count) {
   let letters = ["F", "L", "A", "M", "E", "S"];
   renderFlames(letters);
-
   await sleep(180);
 
   while (letters.length > 1) {
@@ -194,24 +278,13 @@ async function animateFlamesElimination(count) {
 
 function setTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
-  try {
-    localStorage.setItem("flames_theme", theme);
-  } catch {
-    // ignore
-  }
+  try { localStorage.setItem("flames_theme", theme); } catch { }
 }
 
 function initTheme() {
   let saved = null;
-  try {
-    saved = localStorage.getItem("flames_theme");
-  } catch {
-    saved = null;
-  }
-  if (saved === "light" || saved === "dark") {
-    setTheme(saved);
-    return;
-  }
+  try { saved = localStorage.getItem("flames_theme"); } catch { saved = null; }
+  if (saved === "light" || saved === "dark") { setTheme(saved); return; }
   const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
   setTheme(prefersLight ? "light" : "dark");
 }
@@ -248,8 +321,8 @@ async function run() {
 
     UI.count.textContent = String(count);
     UI.count.classList.add("pulse");
-    const showA = remainingA ? `“${remainingA.toUpperCase()}”` : "—";
-    const showB = remainingB ? `“${remainingB.toUpperCase()}”` : "—";
+    const showA = remainingA ? `"${remainingA.toUpperCase()}"` : "—";
+    const showB = remainingB ? `"${remainingB.toUpperCase()}"` : "—";
     UI.countSub.textContent = `Remaining: ${showA} + ${showB}`;
 
     await sleep(260);
@@ -261,21 +334,36 @@ async function run() {
 
     setStatus("Eliminating FLAMES…");
     const last = await animateFlamesElimination(count);
-
     const verified = finalizeFlames(count);
     const letter = last || verified;
 
     const info = describeResult(letter);
+
+    // Build share text
+    lastResultText = `My FLAMES result with ${rawA.trim()} & ${rawB.trim()}: ${info.emoji} ${info.title}`;
+
+    // Show result with reveal animation
     UI.resultRow.hidden = false;
+    UI.resultRow.classList.remove("revealed");
+    void UI.resultRow.offsetWidth; // force reflow for animation restart
+    UI.resultRow.classList.add("revealed");
+
     UI.result.innerHTML = `
-      <div class="badge ${info.badge}" aria-hidden="true">${letter}</div>
-      <div>
-        <div class="result-title">${info.title}</div>
-        <div class="result-desc">${info.desc}</div>
+      <div class="result-inner">
+        <div class="badge ${info.badge}" aria-hidden="true">${info.emoji}</div>
+        <div class="result-text">
+          <div class="result-title">${info.title}</div>
+          <div class="result-desc">${info.desc}</div>
+        </div>
       </div>
     `;
 
-    setStatus(`Result: ${info.title}`);
+    setStatus(`Result: ${info.emoji} ${info.title}`);
+
+    // 🎉 Launch confetti!
+    await sleep(200);
+    launchConfetti();
+
   } finally {
     UI.startBtn.disabled = false;
     UI.resetBtn.disabled = false;
@@ -292,16 +380,19 @@ function resetAll() {
   UI.nameA.focus();
 }
 
-UI.form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  run();
-});
-
+UI.form.addEventListener("submit", (e) => { e.preventDefault(); run(); });
 UI.resetBtn.addEventListener("click", resetAll);
-
+UI.shareBtn.addEventListener("click", shareResult);
 UI.themeToggle.addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme") || "dark";
   setTheme(current === "dark" ? "light" : "dark");
+});
+
+window.addEventListener("resize", () => {
+  if (UI.confettiCanvas) {
+    UI.confettiCanvas.width = window.innerWidth;
+    UI.confettiCanvas.height = window.innerHeight;
+  }
 });
 
 initTheme();

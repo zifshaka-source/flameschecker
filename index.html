@@ -4,22 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <title>FLAMES • Relationship Game</title>
+    <title>Flamify • Relationship Game</title>
     <meta
       name="description"
-      content="A beautiful, dynamic FLAMES relationship game with animated letter-canceling and step-by-step elimination."
+      content="The school notebook game, reborn. Type two names and watch the FLAMES reveal your fate."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
     <div class="bg" aria-hidden="true"></div>
 
     <header class="topbar">
       <div class="brand">
-        <div class="logo" aria-hidden="true">FL</div>
+        <div class="logo" aria-hidden="true">🔥</div>
         <div class="brand-text">
-          <div class="brand-title">FLAMES</div>
-          <div class="brand-subtitle">Dynamic relationship game</div>
+          <div class="brand-title">Flamify</div>
+          <div class="brand-subtitle">The school game, reborn.</div>
         </div>
       </div>
 
@@ -40,7 +44,7 @@
         <div class="card-header">
           <h1 id="title">Find your FLAMES</h1>
           <p class="muted">
-            Type two names, then watch the letters cancel out and FLAMES eliminate step-by-step.
+            Type two names, watch the letters cancel out and FLAMES eliminate step-by-step.
           </p>
         </div>
 
@@ -78,7 +82,7 @@
           <div class="actions">
             <button id="startBtn" class="primary" type="submit">
               <span class="btn-glow" aria-hidden="true"></span>
-              <span class="btn-text">Start</span>
+              <span class="btn-text">Start 🔥</span>
             </button>
             <button id="resetBtn" class="secondary" type="button">Reset</button>
             <div class="status" id="status" role="status" aria-live="polite"></div>
@@ -116,9 +120,31 @@
 
           <div class="stage-row result-row" id="resultRow" hidden>
             <div class="stage-title">Result</div>
-            <div class="result" id="result" aria-live="polite"></div>
+            <div class="result-wrap">
+              <div class="result" id="result" aria-live="polite"></div>
+              <div class="result-actions">
+                <button id="shareBtn" class="share-btn" type="button">
+                  <span>Share result</span>
+                  <span class="share-icon">🔗</span>
+                </button>
+                <div id="copyToast" class="copy-toast" aria-live="polite"></div>
+              </div>
+            </div>
           </div>
         </section>
+      </section>
+
+      <!-- FLAMES meaning legend -->
+      <section class="card legend-card" aria-labelledby="legendTitle">
+        <h2 id="legendTitle">What does FLAMES mean?</h2>
+        <div class="legend-grid">
+          <div class="legend-item"><span class="legend-badge f">F</span><div><strong>Friends</strong><div class="muted tiny">Good vibes, solid bond</div></div></div>
+          <div class="legend-item"><span class="legend-badge l">L</span><div><strong>Love</strong><div class="muted tiny">Romantic connection</div></div></div>
+          <div class="legend-item"><span class="legend-badge a">A</span><div><strong>Affection</strong><div class="muted tiny">Warm and emotionally close</div></div></div>
+          <div class="legend-item"><span class="legend-badge m">M</span><div><strong>Marriage</strong><div class="muted tiny">Partner material 💍</div></div></div>
+          <div class="legend-item"><span class="legend-badge e">E</span><div><strong>Enemies</strong><div class="muted tiny">Chaotic match ⚡</div></div></div>
+          <div class="legend-item"><span class="legend-badge s">S</span><div><strong>Siblings</strong><div class="muted tiny">Like family, always there</div></div></div>
+        </div>
       </section>
 
       <section class="card subtle" id="how" aria-labelledby="howTitle">
@@ -132,16 +158,15 @@
           </li>
         </ol>
         <p class="muted tiny">
-          For entertainment only. Different variants exist; this matches the common “cancel letters + rotate” method.
+          For entertainment only. Different variants exist; this matches the common "cancel letters + rotate" method.
         </p>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="muted tiny">Made locally • No network • Works offline</div>
+      <div class="muted tiny">Flamify • No tracking • Works offline 🔥</div>
     </footer>
 
     <script src="./app.js"></script>
   </body>
 </html>
-
